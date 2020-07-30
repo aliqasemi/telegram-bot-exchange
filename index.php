@@ -4,6 +4,8 @@ $update = file_get_contents('php://input') ;
 
 file_put_contents('bot.txt' , $update) ;
 $update = json_decode($update , TRUE) ;
+
+//detect value for call back query or send message
 if (isset($update['callback_query'])){
     $data = $update['callback_query']['data'];
     $msgid = $update['callback_query']['message']['message_id'];
@@ -34,6 +36,7 @@ function sendPhoto($chatID , $photo){
     file_get_contents($url) ;
 }
 
+//function for edit massage
 function edit($chatid,$msgid,$text,$key){
     $url = 'https://api.telegram.org/bot995623838:AAH4-6nLgfn91-9dA3Ba2H7FgHgnsGS1l6g/editMessageText?chat_id='.$chatid."&message_id=".$msgid.'&text='.$text.'&reply_markup='.$key;
     file_get_contents($url);
@@ -61,6 +64,25 @@ function keyboard($text){
     $final = json_encode($key , true) ;
     return $final ;
 }
+
+//create inline keyboard
+
+function InlineKeyboardButton($text,$data){
+    $opt= [
+        'text'=>$text,
+        'callback_data'=>$data
+    ];
+    return $opt;
+}
+function InlineKeyboardMarkup(array $opt){
+    $reply = [
+        'inline_keyboard' => $opt
+    ];
+    $final_reply = json_encode($reply,TRUE);
+    return $final_reply;
+}
+
+
 
 if ($message == '/start'){
     sendMessage($chatID , 'سلام به ربات گزارشات بورسی خوش آمدید');
