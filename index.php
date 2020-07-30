@@ -4,24 +4,33 @@ $update = file_get_contents('php://input') ;
 
 file_put_contents('bot.txt' , $update) ;
 $update = json_decode($update , TRUE) ;
-$message = $update['message']['text'] ;
-$chatID = $update['message']['from']['id'] ;
+if (isset($update['callback_query'])){
+    $data = $update['callback_query']['data'];
+    $msgid = $update['callback_query']['message']['message_id'];
+    $chatID = $update['callback_query']['from']['id'];
+
+
+}
+else{
+    $message= $update['message']['text'];
+    $chatID = $update['message']['from']['id'];
+}
 
 //function for send message
 function sendMessage($chatID , $text){
-    $url = 'https://api.telegram.org/bot939115526:AAEou5lXkuXwfkOWvVVLr2apM7pBX4pN9dw/sendMessage?chat_id='.$chatID."&text=".$text ;
+    $url = 'https://api.telegram.org/bot995623838:AAH4-6nLgfn91-9dA3Ba2H7FgHgnsGS1l6g/sendMessage?chat_id='.$chatID."&text=".$text ;
     file_get_contents($url) ;
 }
 
 //function for send message with key button
 function sendMessageKey($chatID , $text , $key){
-    $url = 'https://api.telegram.org/bot939115526:AAEou5lXkuXwfkOWvVVLr2apM7pBX4pN9dw/sendMessage?chat_id='.$chatID."&text=".$text.'&reply_markup='.$key ;
+    $url = 'https://api.telegram.org/bot995623838:AAH4-6nLgfn91-9dA3Ba2H7FgHgnsGS1l6g/sendMessage?chat_id='.$chatID."&text=".$text.'&reply_markup='.$key ;
     file_get_contents($url) ;
 }
 
 //function for send photo
 function sendPhoto($chatID , $photo){
-    $url = 'https://api.telegram.org/bot939115526:AAEou5lXkuXwfkOWvVVLr2apM7pBX4pN9dw/sendPhoto?chat_id='.$chatID."&photo=".$photo ;
+    $url = 'https://api.telegram.org/bot995623838:AAH4-6nLgfn91-9dA3Ba2H7FgHgnsGS1l6g/sendPhoto?chat_id='.$chatID."&photo=".$photo ;
     file_get_contents($url) ;
 }
 
@@ -50,5 +59,4 @@ if ($message == '/start'){
     sendMessageKey($chatID , 'انتخاب کنید' , $key_button);
 
 }
-
 
