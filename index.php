@@ -46,10 +46,6 @@ function delete($chatid,$msgid){
     file_get_contents($url);
 }
 
-//function for join channel
-function join_channel(){
-    return "https://t.me/edu_exchange" ;
-}
 
 //file check user is a channel member or not
 
@@ -65,6 +61,31 @@ function check_Member($chat_id,$channel_id){
     else{
         return true;
     }
+}
+
+//function for get value with api
+
+function value($fild){
+    $currency =json_decode( file_get_contents('https://www.megaweb.ir/api/money'),TRUE);
+
+    if ($fild=='دلار'){
+        return  $currency['buy_usd']['price'];
+    }
+    elseif($fild=='یورو'){
+        return  $currency['buy_eur']['price'];
+    }
+
+
+    $ch = curl_init("https://oneapi.ir/api/bourse");
+
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array("OneAPI-Key: your-api-key"));
+
+    $response = curl_exec($ch);
+
+    curl_close($ch);
+
 }
 
 //function for create button
@@ -134,40 +155,59 @@ $data_select = array(
 $channel_select = InlineKeyboardMarkup($channel) ;
 $button_select = InlineKeyboardMarkup($data_select);
 
-
-
-if ($message == '/start'){
-    $check_member = check_Member($chatID , '@edu_exchange') ;
+$check_member = check_Member($chatID , '@edu_exchange') ;
+if($message == '/start' or isset($data)){
     if ($check_member){
-        sendMessage($chatID , 'سلام به ربات گزارشات بورسی خوش آمدید');
-        sendMessage($chatID , 'از طرف تیم edu_exchange');
-        sendPhoto($chatID , 'https://www.alitajran.com/wp-content/uploads/2020/01/Exchange-logo.png');
-        $key_button1 = keyboard('قیمت دلار') ;
+        if ($message == '/start'){
+            sendMessage($chatID , 'سلام به ربات گزارشات بورسی خوش آمدید');
+            sendMessage($chatID , 'از طرف تیم edu_exchange');
+            sendPhoto($chatID , 'https://www.alitajran.com/wp-content/uploads/2020/01/Exchange-logo.png');
+            //$key_button1 = keyboard('قیمت دلار') ;
 
-        sendMessageKey($chatID , '' , $key_button1);
-        sendMessageKey($chatID , 'انتخاب کنید' , $button_select);
-
+            //sendMessageKey($chatID , '' , $key_button1);
+            sendMessageKey($chatID,"انتخاب کنید",$button_select);
+        }
 
         if (isset($data)){
-            if ($data=="دلار"){
-                $price = arz('دلار');
-                $text1 = 'قیمت دلار هم اکنون برابر '.$price.'ریال میباشد';
+            if ($data == "دلار" ){
+                $price = value('دلار');
+                $text1 = 'قیمت دلار هم اکنون برابر '.$price.' ریال میباشد';
                 edit($chatID,$msgid,$text1,$button_select);
+                exit();
             }
-            elseif ($data=="یورو"){
-                $price = arz('یورو');
-                $text1 = 'قیمت یورو هم اکنون برابر '.$price.'ریال میباشد';
+            elseif ( $data == "یورو" ){
+                $price = value('یورو');
+                $text1 = 'قیمت یورو هم اکنون برابر '.$price.' ریال میباشد';
                 edit($chatID,$msgid,$text1,$button_select);
+                exit();
+            }
+            elseif ($data == "بورس"){
+                $price = 6;
+                $text1 = 'شاخص کل بورس تهران هم اکنون برابر '.$price.' واحد میباشد';
+                edit($chatID,$msgid,$text1,$button_select);
+                exit();
+            }
+            elseif ($data == "فرابورس"){
+                $price = 6;
+                $text1 = 'شاخص کل فرا بورس هم اکنون برابر '.$price.' واحد میباشد';
+                edit($chatID,$msgid,$text1,$button_select);
+                exit();
             }
         }
+
+        if(isset($message)){
+            //
+        }
+
+
     }
     else{
-
         sendMessage($chatID , 'کاربر گرامی برای استفاده از ربات ابتدا وارد کانال edu_exchange شوید.');
         sendMessageKey($chatID , 'با دکمه زیر عضو کانال عضو شوید' , $channel_select);
         exit();
     }
 
-
 }
+
+
 
