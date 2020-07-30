@@ -34,6 +34,17 @@ function sendPhoto($chatID , $photo){
     file_get_contents($url) ;
 }
 
+function edit($chatid,$msgid,$text,$key){
+    $url = 'https://api.telegram.org/bot995623838:AAH4-6nLgfn91-9dA3Ba2H7FgHgnsGS1l6g/editMessageText?chat_id='.$chatid."&message_id=".$msgid.'&text='.$text.'&reply_markup='.$key;
+    file_get_contents($url);
+}
+
+//function for delete massage
+function delete($chatid,$msgid){
+    $url = 'https://api.telegram.org/bot995623838:AAH4-6nLgfn91-9dA3Ba2H7FgHgnsGS1l6g/deleteMessage?chat_id='.$chatid."&message_id=".$msgid;
+    file_get_contents($url);
+}
+
 //function for create button
 function keyboard($text){
     $btn = array(
