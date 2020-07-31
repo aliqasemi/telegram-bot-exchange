@@ -56,7 +56,6 @@ function check_Member($chat_id,$channel_id){
     $status = $result_json['result']['status'];
     if ($status=='left'){
         return false;
-
     }
     else{
         return true;
@@ -74,17 +73,6 @@ function value($fild){
     elseif($fild=='یورو'){
         return  $currency['buy_eur']['price'];
     }
-
-
-    $ch = curl_init("https://oneapi.ir/api/bourse");
-
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array("OneAPI-Key: your-api-key"));
-
-    $response = curl_exec($ch);
-
-    curl_close($ch);
 
 }
 
@@ -133,6 +121,223 @@ function InlineKeyboardMarkup(array $opt){
     return $final_reply;
 }
 
+
+//function for add values table
+function addValuesTable(){
+
+
+    $servername = "aliqasemi1377.ir";
+    $username = "aliqasem_edu_exchange";
+    $password = ".]v}Nm{RLW3g";
+    $dbname = "aliqasem_edu_exchange";
+
+    // Create connection
+    $connect = new mysqli($servername, $username, $password , $dbname);
+
+    // Check connection
+    if ($connect->connect_error) {
+        die("Connection failed: " . $connect->connect_error);
+    }
+    echo "Connected successfully";
+
+    $ch1 = curl_init("https://oneapi.ir/api/bourse");
+
+    curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
+
+    curl_setopt($ch1, CURLOPT_HTTPHEADER, array("OneAPI-Key: 8f39eb06bcc02f97b854e5e5907b809f"));
+
+    $response1 = curl_exec($ch1);
+
+    $ch2 = curl_init("https://oneapi.ir/api/bourse/overseas");
+
+    curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
+
+    curl_setopt($ch2, CURLOPT_HTTPHEADER, array("OneAPI-Key: 8f39eb06bcc02f97b854e5e5907b809f"));
+
+    $response2 = curl_exec($ch2);
+
+    curl_close($ch2);
+
+    $bourse1 = json_decode($response1 , TRUE) ;
+
+    $bourse2 = json_decode($response2 , TRUE) ;
+
+    if ($bourse1[0]["status"] == -3 || $bourse2[0]["status"] == -3){
+        echo "error" ;
+    }
+    else{
+        foreach ($bourse1 as $b){
+            $symbol = $b["symbol"] ;
+            $name = $b["name"] ;
+            $market = $b["market"] ;
+            $flow = $b["flow"] ;
+            $last_price_value = $b["last_price"]["value"] ;
+            $last_price_change = $b["last_price"]["change"] ;
+            $last_price_percent = $b["last_price"]["percent"] ;
+            $last_price_status = $b["last_price"]["status"] ;
+            $final_price_value = $b["final_price"]["value"] ;
+            $final_price_change = $b["final_price"]["change"] ;
+            $final_price_percent = $b["final_price"]["percent"] ;
+            $final_price_status = $b["final_price"]["status"] ;
+            $trades_date = $b["trades"]["date"] ;
+            $trades_count = $b["trades"]["count"] ;
+            $trades_volume = $b["trades"]["volume"] ;
+            $trades_value = $b["trades"]["value"] ;
+            $trades_medium = $b["trades"]["medium"] ;
+            $prices_yesterday = $b["prices"]["yesterday"];
+            $prices_first = $b["prices"]["first"];
+            $prices_low = $b["prices"]["low"];
+            $prices_high = $b["prices"]["high"];
+            $buy_count = $b["buy"]["count"] ;
+            $buy_volume = $b["buy"]["volume"] ;
+            $buy_price = $b["buy"]["price"] ;
+            $sale_count = $b["sale"]["count"] ;
+            $sale_volume = $b["sale"]["volume"] ;
+            $sale_price = $b["sale"]["price"] ;
+            $market_value = $b["market_value"] ;
+            $property_today = $b["property_today"] ;
+            $property_realty = $b["property_realty"] ;
+            $last_capital = $b["last_capital"] ;
+            $debt = $b["debt"] ;
+            $salary = $b["salary"] ;
+            $income = $b["income"] ;
+            $ttm = $b["ttm"] ;
+            $pe = $b["pe"] ;
+            $pb = $b["pb"] ;
+            $ps = $b["ps"] ;
+            $buy_vol_person = $b["buy_vol"]["person"] ;
+            $buy_vol_legal = $b["buy_vol"]["legal"] ;
+            $sale_vol_person = $b["sale_vol"]["person"] ;
+            $sale_vol_legal = $b["sale_vol"]["legal"] ;
+            $type = "نوع" ;
+            $sql = "INSERT INTO `values` 
+            (`symbol`, `name`, `market`, `flow`, 
+            `last_price.value`, `last_price.change`, 
+            `last_price.percent`, `last_price.status`, 
+            `final_price.value`, `final_price.change`, 
+            `final_price.percent`, `final_price.status`, 
+            `trades.date`, `trades.count`, `trades.volume`, 
+            `trades.value`, `trades.medium`, `prices.yesterday`, 
+            `prices.first`, `prices.low`, `prices.high`, `buy.count`, 
+            `buy.volume`, `buy.price`, `sale.count`, `sale.volume`, `sale.price`, 
+            `market_value`, `property_today`, `property_realty`, `last_capital`, 
+            `debt`, `salary`, `income`, `ttm`, `pe`, `pb`, `ps`, `buy_vol.person`, 
+            `buy_vol.legal`, `sale_vol.person`, `sale_vol.legal`, `type`)
+             VALUES ('$symbol', '$name', '$market', '$flow',
+              '$last_price_value', '$last_price_change',
+               '$last_price_percent', '$last_price_status',
+                '$final_price_value', '$final_price_change',
+                 '$final_price_percent', '$final_price_status',
+                  '$trades_date', '$trades_count', '$trades_volume',
+                   '$trades_value', '$trades_medium', '$prices_yesterday',
+                    '$prices_first', '$prices_low', '$prices_high', '$buy_count',
+                     '$buy_volume', '$buy_price', '$sale_count', '$sale_volume', '$sale_price',
+                      '$market_value', '$property_today', '$property_realty ', '$last_capital',
+                       '$debt', '$salary', '$income' ,  '$ttm', '$pe', '$pb', '$ps', '$buy_vol_person' ,
+                         '$buy_vol_legal' , '$sale_vol_person', '$sale_vol_legal', '$type' )
+" ;
+            if ($connect->query($sql) === TRUE) {
+                echo "New record created successfully";
+            } else {
+                echo "Error: " . $sql . "<br>" . $connect->error;
+            }
+        }
+
+
+        foreach ($bourse2 as $b){
+            $symbol = $b["symbol"] ;
+            $name = $b["name"] ;
+            $market = $b["market"] ;
+            $flow = $b["flow"] ;
+            $last_price_value = $b["last_price"]["value"] ;
+            $last_price_change = $b["last_price"]["change"] ;
+            $last_price_percent = $b["last_price"]["percent"] ;
+            $last_price_status = $b["last_price"]["status"] ;
+            $final_price_value = $b["final_price"]["value"] ;
+            $final_price_change = $b["final_price"]["change"] ;
+            $final_price_percent = $b["final_price"]["percent"] ;
+            $final_price_status = $b["final_price"]["status"] ;
+            $trades_date = $b["trades"]["date"] ;
+            $trades_count = $b["trades"]["count"] ;
+            $trades_volume = $b["trades"]["volume"] ;
+            $trades_value = $b["trades"]["value"] ;
+            $trades_medium = $b["trades"]["medium"] ;
+            $prices_yesterday = $b["prices"]["yesterday"];
+            $prices_first = $b["prices"]["first"];
+            $prices_low = $b["prices"]["low"];
+            $prices_high = $b["prices"]["high"];
+            $buy_count = $b["buy"]["count"] ;
+            $buy_volume = $b["buy"]["volume"] ;
+            $buy_price = $b["buy"]["price"] ;
+            $sale_count = $b["sale"]["count"] ;
+            $sale_volume = $b["sale"]["volume"] ;
+            $sale_price = $b["sale"]["price"] ;
+            $market_value = $b["market_value"] ;
+            $property_today = $b["property_today"] ;
+            $property_realty = $b["property_realty"] ;
+            $last_capital = $b["last_capital"] ;
+            $debt = $b["debt"] ;
+            $salary = $b["salary"] ;
+            $income = $b["income"] ;
+            $ttm = $b["ttm"] ;
+            $pe = $b["pe"] ;
+            $pb = $b["pb"] ;
+            $ps = $b["ps"] ;
+            $buy_vol_person = $b["buy_vol"]["person"] ;
+            $buy_vol_legal = $b["buy_vol"]["legal"] ;
+            $sale_vol_person = $b["sale_vol"]["person"] ;
+            $sale_vol_legal = $b["sale_vol"]["legal"] ;
+            $type = "نوع" ;
+            $sql = "INSERT INTO `values` 
+            (`symbol`, `name`, `market`, `flow`, 
+            `last_price.value`, `last_price.change`, 
+            `last_price.percent`, `last_price.status`, 
+            `final_price.value`, `final_price.change`, 
+            `final_price.percent`, `final_price.status`, 
+            `trades.date`, `trades.count`, `trades.volume`, 
+            `trades.value`, `trades.medium`, `prices.yesterday`, 
+            `prices.first`, `prices.low`, `prices.high`, `buy.count`, 
+            `buy.volume`, `buy.price`, `sale.count`, `sale.volume`, `sale.price`, 
+            `market_value`, `property_today`, `property_realty`, `last_capital`, 
+            `debt`, `salary`, `income`, `ttm`, `pe`, `pb`, `ps`, `buy_vol.person`, 
+            `buy_vol.legal`, `sale_vol.person`, `sale_vol.legal`, `type`)
+             VALUES ('$symbol', '$name', '$market', '$flow',
+              '$last_price_value', '$last_price_change',
+               '$last_price_percent', '$last_price_status',
+                '$final_price_value', '$final_price_change',
+                 '$final_price_percent', '$final_price_status',
+                  '$trades_date', '$trades_count', '$trades_volume',
+                   '$trades_value', '$trades_medium', '$prices_yesterday',
+                    '$prices_first', '$prices_low', '$prices_high', '$buy_count',
+                     '$buy_volume', '$buy_price', '$sale_count', '$sale_volume', '$sale_price',
+                      '$market_value', '$property_today', '$property_realty ', '$last_capital',
+                       '$debt', '$salary', '$income' ,  '$ttm', '$pe', '$pb', '$ps', '$buy_vol_person' ,
+                         '$buy_vol_legal' , '$sale_vol_person', '$sale_vol_legal', '$type' )
+" ;
+            if ($connect->query($sql) === TRUE) {
+                echo "New record created successfully";
+            } else {
+                echo "Error: " . $sql . "<br>" . $connect->error;
+            }
+        }
+
+
+
+
+
+    }
+
+
+
+
+
+//echo $update[0]["name"].'hello'
+//var_dump($bourse);
+
+
+
+}
+
 //button for check member
 $channel = array(
     array(
@@ -155,10 +360,16 @@ $data_select = array(
 $channel_select = InlineKeyboardMarkup($channel) ;
 $button_select = InlineKeyboardMarkup($data_select);
 
+
+
+//addValuesTable();
+
+
 $check_member = check_Member($chatID , '@edu_exchange') ;
 if($message == '/start' or isset($data)){
     if ($check_member){
         if ($message == '/start'){
+
             sendMessage($chatID , 'سلام به ربات گزارشات بورسی خوش آمدید');
             sendMessage($chatID , 'از طرف تیم edu_exchange');
             sendPhoto($chatID , 'https://www.alitajran.com/wp-content/uploads/2020/01/Exchange-logo.png');
@@ -206,6 +417,7 @@ if($message == '/start' or isset($data)){
         sendMessageKey($chatID , 'با دکمه زیر عضو کانال عضو شوید' , $channel_select);
         exit();
     }
+
 
 }
 
